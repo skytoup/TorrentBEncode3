@@ -12,7 +12,7 @@ with open(path.join(DIR, 'README.md')) as f:
 
 setup_kwargs = {
     'name': 'torrent-bencode3',
-    'version': '0.0.3',
+    'version': '0.1.1',
     "license": "MIT",
     'author': 'skytoup',
     'author_email': 'skytoupone1@gmail.com',

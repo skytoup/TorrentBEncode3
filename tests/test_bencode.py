@@ -3,7 +3,7 @@
 
 import inspect
 from os import path
-from bencode import BEncode
+from bencode import dumps, loads
 
 cur_file = inspect.getfile(inspect.currentframe())
 cur_directory = path.dirname(path.abspath(cur_file))
@@ -37,14 +37,25 @@ simple_invalid_encode_datas = [
     {'b': object()},
     object(),
 ]
+circular_ref_a = [1, 2, 3]
+circular_ref_b = [3, 2, 1]
+circular_ref_c = {'a': 1}
+circular_ref_a.append(circular_ref_b)
+circular_ref_b.append(circular_ref_a)
+circular_ref_c['b'] = circular_ref_c
+circular_ref_datas = [
+    circular_ref_a,
+    circular_ref_b,
+    circular_ref_c,
+]
 
 
 def test_simple_encode_decode():
     for d, e in simple_datas:
-        encode = BEncode.dumps(d)
+        encode = dumps(d)
         assert encode == e
 
-        decode = BEncode.loads(e)
+        decode = loads(e)
         assert decode == d
 
 
@@ -53,10 +64,10 @@ def test_torrent():
         with open(tf, 'rb') as f:
             bs = f.read()
 
-            decode_torrent = BEncode.loads(bs)
+            decode_torrent = loads(bs)
             assert decode_torrent is not None
 
-            encode_torrent = BEncode.dumps(decode_torrent)
+            encode_torrent = dumps(decode_torrent)
             assert encode_torrent is not None
 
             assert bs == encode_torrent
@@ -65,7 +76,7 @@ def test_torrent():
 def test_invalid_encode_data():
     for data in simple_invalid_decode_datas:
         try:
-            BEncode.loads(data)
+            loads(data)
         except:
             pass
         else:
@@ -75,7 +86,17 @@ def test_invalid_encode_data():
 def test_invalid_decode_data():
     for data in simple_invalid_encode_datas:
         try:
-            BEncode.dumps(data)
+            dumps(data)
+        except:
+            pass
+        else:
+            assert 0
+
+
+def test_decode_circular_ref():
+    for data in circular_ref_datas:
+        try:
+            dumps(data)
         except:
             pass
         else:

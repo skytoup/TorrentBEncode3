@@ -13,14 +13,14 @@
 
 ## 使用
 ```python3
-from bencode import BEncode
+from bencode import dumps, loads, dump, load
 
 
-s = BEncode.loads(b'11:hello world')  # b'hello world'
-BEncode.dumps(s)  # b'11:hello world'
+s = loads(b'11:hello world')  # b'hello world'
+dumps(s)  # b'11:hello world'
 
 with open('/path/to/torrent', 'rb') as f:
-    obj = BEncode.load(f)
+    obj = load(f)
     with open('/path/to/save/torrent', 'wb') as wf:
-        BEncode.dump(obj, wf)
+        dump(obj, wf)
 ```
